@@ -3,7 +3,7 @@ from sshtunnel import SSHTunnelForwarder
 from  pymongo import ASCENDING,DESCENDING
 
 #MONGO_HOST = '18.208.164.105'
-MONGO_HOST = '44.204.49.238'
+MONGO_HOST = '35.174.165.155'
 USER = 'ubuntu'
 PRIVATE_KEY = '/Users/ashish/Downloads/AWSKeyTeam.pem'
 
@@ -43,7 +43,7 @@ def find_movies_by_rating(n, order):
 def sort_movies_by_criteria(criteria,order) :
     # note: added limit temporarily
     
-    movies = collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1})
+    movies = collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1,"imdbId": 1})
     movies = movies.sort(criteria, order).limit(5)
 
     for movie in movies:
@@ -133,9 +133,9 @@ def user_input():
                          "9. Filter movies by other criteria \n"
                          "10. Find top movies \n"
                          "11. Find worst movies \n"
-                         "12. Sort movies by cast \n"
-                         "13. Sort movies by director \n"
-                         "14. Sort movies by iMDb id \n"
+                         "12. Sort movies by cast  \n"
+                         "13. Sort movies by director  \n"
+                         "14. Sort movies by iMDb \n"
                          "15. Bookmark movie \n"
                          "16. Un-bookmark movie \n"
                          "17. Hide movie \n"
@@ -191,11 +191,17 @@ def user_input():
             n = int(input("\nWorst n movies (value for n): "))
             find_movies_by_rating(n, ASCENDING)
         elif func == 12:
-            sort_movies_by_criteria('starring', DESCENDING)
+            order = int(input("\nSpecify Ordering (1)ASCENDING (2) DESCENDING . Input 1 or 2 to choose :"))
+            order = ASCENDING if order == 1 else DESCENDING if order == 2 else None
+            sort_movies_by_criteria('starring', order)
         elif func == 13:
-            sort_movies_by_criteria('directedBy', DESCENDING)
+            order = int(input("\nSpecify Ordering (1)ASCENDING (2) DESCENDING . Input 1 or 2 to choose :"))
+            order = ASCENDING if order == 1 else DESCENDING if order == 2 else None
+            sort_movies_by_criteria('directedBy', order)
         elif func == 14:
-            sort_movies_by_criteria('imdbId', DESCENDING)
+            order = int(input("\nSpecify Ordering (1)ASCENDING (2) DESCENDING . Input 1 or 2 to choose :"))
+            order = ASCENDING if order == 1 else DESCENDING if order == 2 else None
+            sort_movies_by_criteria('imdbId', order)
         elif func == 15:
             title = input("\nTitle of the movie to bookmark: ")
             update_bookmark(title, True)
