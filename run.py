@@ -40,10 +40,14 @@ def find_movies_by_rating(n, order):
 
 
 #Sort movies by criteria
-def sort_movies_by_criteria(criteria) :
+def sort_movies_by_criteria(criteria,order) :
     # note: added limit temporarily
-    for movie in collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1}).sort({criteria: 1}).limit(5):
-        pprint.pprint(movie)
+    
+    movies = collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1})
+    movies = movies.sort(criteria, order).limit(5)
+
+    for movie in movies:
+        print(movie)
 
 
 #Bookmark/un-bookmark movie
@@ -187,11 +191,11 @@ def user_input():
             n = int(input("\nWorst n movies (value for n): "))
             find_movies_by_rating(n, ASCENDING)
         elif func == 12:
-            sort_movies_by_criteria('starring')
+            sort_movies_by_criteria('starring', DESCENDING)
         elif func == 13:
-            sort_movies_by_criteria('directedBy')
+            sort_movies_by_criteria('directedBy', DESCENDING)
         elif func == 14:
-            sort_movies_by_criteria('imdbId')
+            sort_movies_by_criteria('imdbId', DESCENDING)
         elif func == 15:
             title = input("\nTitle of the movie to bookmark: ")
             update_bookmark(title, True)
