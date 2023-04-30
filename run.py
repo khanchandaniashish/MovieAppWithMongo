@@ -81,9 +81,11 @@ def update_blacklist(title, val):
 
 #Add a review
 def add_movie_review(title, review) :
-    result = collection.update_one({'title': title}, {'$push': {'txt': review}})
+    movie = collection.find_one({'title': {'$regex': "^" + title}}, {'_id': 1})
+    result = collection.update_one({'title': {'$regex': "^" + title}, '_id': movie['_id']}, {'$push': {'txt': review}},
+                                   upsert=False)
     print(result)
-    movie = collection.find_one({'title': title}, {'title': 1, 'txt': 1})
+    movie = collection.find_one({'title': {'$regex': "^" + title}}, {'title': 1, 'txt': 1})
     pprint.pprint(movie)
 
 #Update movie title
@@ -165,16 +167,18 @@ def user_input():
             find_movies_by_criteria({'avgRating': float(avg_rating)})
         elif func == 9:
             criteria = {}
-            item_id = int(input("\nItem Id? (n to skip)"))
-            if item_id != "n": criteria['item_id'] = item_id
+            item_id = input("\nItem Id? (n to skip)")
+            if item_id != "n": criteria['item_id'] = int(item_id)
+            title = input("\nTitle? (n to skip)")
+            if title != "n": criteria['title'] = {"$regex": "^" + title}
             directed_by = input("\nDirector? (n to skip)")
             if directed_by != "n": criteria['directedBy'] = {"$regex": "^" + directed_by}
             avg_rating = input("\nAverage rating? (n to skip)")
-            if avg_rating != "n": criteria['avgRating'] = avg_rating
+            if avg_rating != "n": criteria['avgRating'] = float(avg_rating)
             cast = input("\nCast? (n to skip)")
             if cast != "n": criteria['starring'] = {"$regex": "^" + cast}
             imdbId = input("\niMDb id? (n to skip)")
-            if imdbId != "n": criteria['imdbId'] = imdbId
+            if imdbId != "n": criteria['imdbId'] = int(imdbId)
             find_movies_by_criteria(criteria)
         elif func == 10:
             n = int(input("\nTop n movies (value for n): "))
