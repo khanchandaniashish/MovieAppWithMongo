@@ -46,7 +46,7 @@ def sort_movies_by_criteria(criteria) :
 
 #Bookmark/un-bookmark movie
 def update_bookmark(title, val):
-    filter = {"title": {"$regex": "/"+title+"/"}}
+    filter = {"title": {"$regex": "^"+title}}
     update = {"$set": {"bookmarked": val}}
     result = collection.update_many(filter, update, upsert=False)
     print(result)
@@ -57,7 +57,7 @@ def update_bookmark(title, val):
 
 #Hide/unhide movie
 def update_hidden(title, val):
-    filter = {"title": {"$regex": "/"+title+"/"}}
+    filter = {"title": {"$regex": "^"+title}}
     update = {"$set": {"hidden": val}}
     result = collection.update_many(filter, update, upsert=False)
     print(result)
@@ -68,7 +68,7 @@ def update_hidden(title, val):
 
 #Blacklist/whitelist movie
 def update_blacklist(title, val):
-    filter = {"title": {"$regex": "/"+title+"/"}}
+    filter = {"title": {"$regex": "^"+title}}
     update = {"$set": {"blacklisted": val}}
     result = collection.update_many(filter, update, upsert=False)
     print(result)
@@ -156,7 +156,7 @@ def user_input():
             cast = input("\nCast of the movie to search: ")
             find_movies_by_criteria({'starring': {"$regex": "^"+cast}})
         elif func == 7:
-            find_movies_by_criteria({'bookmarked': "true"})
+            find_movies_by_criteria({'bookmarked': True})
         elif func == 8:
             avg_rating = input("\nAverage rating of the movie to search: ")
             find_movies_by_criteria({'avgRating': float(avg_rating)})
@@ -165,11 +165,11 @@ def user_input():
             item_id = int(input("\nItem Id? (n to skip)"))
             if item_id != "n": criteria['item_id'] = item_id
             directed_by = input("\nDirector? (n to skip)")
-            if directed_by != "n": criteria['directedBy'] = {"$regex": "/" + directed_by + "/"}
+            if directed_by != "n": criteria['directedBy'] = {"$regex": "^" + directed_by}
             avg_rating = input("\nAverage rating? (n to skip)")
             if avg_rating != "n": criteria['avgRating'] = avg_rating
             cast = input("\nCast? (n to skip)")
-            if cast != "n": criteria['starring'] = {"$regex": "/" + cast + "/"}
+            if cast != "n": criteria['starring'] = {"$regex": "^" + cast}
             imdbId = input("\niMDb id? (n to skip)")
             if imdbId != "n": criteria['imdbId'] = imdbId
             find_movies_by_criteria(criteria)
@@ -187,22 +187,22 @@ def user_input():
             sort_movies_by_criteria('imdbId')
         elif func == 15:
             title = input("\nTitle of the movie to bookmark: ")
-            update_bookmark(title, "true")
+            update_bookmark(title, True)
         elif func == 16:
             title = input("\nTitle of the movie to un-bookmark: ")
-            update_bookmark(title, "false")
+            update_bookmark(title, False)
         elif func == 17:
             title = input("\nTitle of the movie to hide: ")
-            update_hidden(title, "true")
+            update_hidden(title, True)
         elif func == 18:
             title = input("\nTitle of the movie to unhide: ")
-            update_hidden(title, "false")
+            update_hidden(title, False)
         elif func == 19:
             title = input("\nTitle of the movie to blacklist: ")
-            update_blacklist(title, "true")
+            update_blacklist(title, True)
         elif func == 20:
             title = input("\nTitle of the movie to whitelist: ")
-            update_blacklist(title, "false")
+            update_blacklist(title, False)
         elif func == 21:
             title = input("\nTitle of the movie to review: ")
             review = input("\nReview to add: ")
