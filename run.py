@@ -1,15 +1,13 @@
 from pymongo import MongoClient, ReadPreference
 from sshtunnel import SSHTunnelForwarder
+from  pymongo import ASCENDING,DESCENDING
 
-import pprint
-
-#check
+#MONGO_HOST = '18.208.164.105'
 MONGO_HOST = '44.204.49.238'
 USER = 'ubuntu'
-#check
-PRIVATE_KEY = 'AWSKeyTeam.pem'
+PRIVATE_KEY = '/Users/ashish/Downloads/AWSKeyTeam.pem'
 
-server = SSHTunnelForwarder(MONGO_HOST, ssh_username = USER, ssh_pkey = PRIVATE_KEY, remote_bind_address = ('127.0.0.1', 27017))
+server = SSHTunnelForwarder(MONGO_HOST, ssh_username = USER, ssh_pkey=PRIVATE_KEY, remote_bind_address = ('127.0.0.1', 27017))
 server.start()
 print("Successfully established connection to:" + MONGO_HOST + "\n")
 
@@ -33,8 +31,12 @@ def find_movies_by_criteria(criteria) :
 
 # Movies by rating
 def find_movies_by_rating(n, order):
-    for movie in collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1}).sort({"avgRating": order}).limit(n):
-        pprint.pprint(movie)
+    
+    movies = collection.find({}, {"title": 1, "directedBy": 1, "starring": 1, "avgRating": 1})
+    movies = movies.sort("avgRating",  order).limit(n)
+    
+    for movie in movies:
+        print(movie)
 
 
 #Sort movies by criteria
@@ -138,6 +140,7 @@ def user_input():
                          "22. Add movie \n"
                          "23. Delete movie by item_id \n"
                          "24. Update title for a movie \n"
+                         "Type in the number of the function to call : "
                         ))
         if func == 1: find_all_movies()
         elif func == 2:
@@ -175,10 +178,10 @@ def user_input():
             find_movies_by_criteria(criteria)
         elif func == 10:
             n = int(input("\nTop n movies (value for n): "))
-            find_movies_by_rating(n, 1)
+            find_movies_by_rating(n, DESCENDING)
         elif func == 11:
             n = int(input("\nWorst n movies (value for n): "))
-            find_movies_by_rating(n, -1)
+            find_movies_by_rating(n, ASCENDING)
         elif func == 12:
             sort_movies_by_criteria('starring')
         elif func == 13:
